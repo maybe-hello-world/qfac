@@ -34,7 +34,7 @@ def visualise(
 
 	mean_y = np.mean(results, axis=0)
 	std_y = np.std(results, axis=0)
-	stderr_y = std_y / np.sqrt(results.shape(0))
+	stderr_y = std_y / np.sqrt(results.shape[0])
 
 	xs = np.arange(len(mean_y))
 
