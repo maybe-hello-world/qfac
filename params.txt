@@ -1,0 +1,42 @@
+# ---------------------------------------------------------
+net: dense(64), dense(12), dense(actions)
+GYM_ENV: 'CartPole-v1'
+#################################
+COMMON_OPTS = {
+	'OVERALL_STEPS': 70000,
+	'UPDATE_TARGET_EVERY': 1000,
+	'REPLAY_BUFFER_SAMPLE_SIZE': 100,
+	'WARMUP_TIME': 1000,
+	'LINEAR_SCHEDULE_LENGTH': 10000,
+	'REPLAY_BUFFER_SIZE': 20000
+},
+	
+#################################
+(
+	'kfac',
+	KFAC_OPTS = {
+		'learning_rate': 0.0001,
+		'cov_ema_decay': 0.8,
+		'momentum': 0.5,
+		'damping': 0.03
+	}
+)
+
+#################################
+# find another good values!
+(
+	'adam',
+	ADAM_OPTS = {
+		'learning_rate': 0.001
+	}
+)
+#################################
+(
+	'rmsprop',
+	RMSPROP_OPTS = {
+		'learning_rate': 0.00025,
+		'decay': 0.95,
+		'momentum': 0.9,
+		'epsilon': 1e-10
+	}
+)
