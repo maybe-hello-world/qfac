@@ -94,6 +94,7 @@ def create_grid(
 
 	# get cartesian product of all lists
 	product_list = list(product(
+		[_optimizer],
 		_gym_env_list, _common_opts_list,
 		_optimizer_opts_list, _seed_list
 	))
