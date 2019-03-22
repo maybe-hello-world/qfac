@@ -18,18 +18,17 @@ _adam_opts = {
 }
 
 _rmsprop_opts = {
-	'learning_rate': 25e-5,
-	'decay': 0.99,
-	'momentum': 0.95,
-	'epsilon': 1e-10
+	'learning_rate': [1e-4, 25e-5, 5e-4, 1e-3],
+	'decay': [0.9, 0.95, 0.99],
+	'momentum': [0.9, 0.95, 0.95],
 }
 
 gridsearch_creator.create_grid(
-	_optimizer=["adam"],
-	filename="test",
+	_optimizer="rmsprop",
+	filename="task",
 	n_hosts=4,
 	n_gpus=2,
-	_adam_opts=_adam_opts,
+	_optimizer_opts=_rmsprop_opts,
 	_common_opts=_common_opts,
 	_seed=[1, 2, 3, 4]
 )

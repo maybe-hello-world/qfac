@@ -45,12 +45,12 @@ _seed_orig = 1
 def create_grid(
 		filename: str,
 		n_hosts: int, n_gpus: int,
-		_optimizer: list = None,
+		_optimizer: str = None,
 		_gym_env: list = None,
 		_common_opts: dict = None,
 		_optimizer_opts: dict = None,
 		_seed: list = None,
-		_out_folder: str = "../tasks"
+		_out_folder: str = "tasks/"
 ) -> None:
 	"""
 	Create grid and save params to files for SLURM.
@@ -60,7 +60,7 @@ def create_grid(
 	:param filename: filename template for saving
 	:param n_hosts: number of SLURM hosts
 	:param n_gpus: number of GPUs on each host
-	:param _optimizer: list of optimizers
+	:param _optimizer: chosen optimizers
 	:param _gym_env: list of OpenAI Gym discrete environments
 	:param _common_opts: dictionary of common options, every option can be a list of values,
 							missing options will be initialized with default values
@@ -89,8 +89,8 @@ def create_grid(
 	_common_opts_list = parse_dict(_common_opts, _common_opts_orig)
 
 	# get optimizer and parse it's options
-	_optimizer_opts_list = _opt_options_choice[_optimizer]
-	_optimizer_opts_list = parse_dict(_optimizer_opts_list, _optimizer_opts_list)
+	_optimizer_opts_orig_list = _opt_options_choice[_optimizer]
+	_optimizer_opts_list = parse_dict(_optimizer_opts, _optimizer_opts_orig_list)
 
 	# get cartesian product of all lists
 	product_list = list(product(
