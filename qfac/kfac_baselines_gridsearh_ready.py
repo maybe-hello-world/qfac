@@ -293,8 +293,8 @@ def learn_cycle(
 				update_target()
 
 	# get hash for combining results with different seed
-	_hcommon_opts = hash(frozenset(_common_opts.items()))  # it's valid since it's dictionary of strings and numbers only
-	_hoptimizer_opts = hash(frozenset(_optimizer_opts.items()))  # similar
+	_hcommon_opts = frozenset(_common_opts.items())  # it's valid since it's dictionary of strings and numbers only
+	_hoptimizer_opts = frozenset(_optimizer_opts.items())  # similar
 	_attempt_hash = hash((_optimizer, _gym_env, _hcommon_opts, _hoptimizer_opts))
 	return _attempt_hash, (_optimizer, _gym_env, _common_opts, _optimizer_opts), tuple(episode_rewards)
 
