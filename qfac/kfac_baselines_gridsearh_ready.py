@@ -41,7 +41,9 @@ from baselines.common.schedules import LinearSchedule
 
 # dirty :(
 try:
-	from .env_wrappers import *
+	import sys
+	sys.path.append(".")
+	from env_wrappers import *
 except ImportError:
 	from qfac.env_wrappers import *
 
@@ -131,9 +133,9 @@ def learn_cycle(
 
 	def cnn_model(inpt, num_actions, scope, lc, reuse=False, register=False):
 		"""Add convolution layers before model"""
-		conv_n_maps = [32, 64, 64]
+		conv_n_maps = [16, 32, 32]
 		conv_kernel_sizes = [(8, 8), (4, 4), (3, 3)]
-		conv_strides = [4, 2, 1]
+		conv_strides = [4, 2, 2]
 		conv_paddings = ["SAME"] * 3
 		conv_activation = [tf.nn.relu] * 3
 
