@@ -1,14 +1,3 @@
-import tensorflow as tf
-import baselines.common.tf_util as u
-import gym
-import numpy as np
-
-from baselines.deepq.replay_buffer import ReplayBuffer
-from baselines.deepq.utils import ObservationInput
-from baselines.common.schedules import LinearSchedule
-
-import kfac
-
 """
 Examples
 
@@ -40,6 +29,30 @@ _adam_opts = {
 
 
 """
+from collections import defaultdict
+
+import tensorflow as tf
+import baselines.common.tf_util as u
+import gym
+
+from baselines.deepq.replay_buffer import ReplayBuffer
+from baselines.deepq.utils import ObservationInput
+from baselines.common.schedules import LinearSchedule
+
+# dirty :(
+try:
+	from .env_wrappers import *
+except ImportError:
+	from qfac.env_wrappers import *
+
+import kfac
+
+
+preprocessor = defaultdict(lambda: (PreprocessNothing, "dense"))
+# noinspection PyTypeChecker
+preprocessor.update({
+	"Breakout-v0": (PreprocessBreakout, "cnn")
+})
 
 
 def learn_cycle(
@@ -115,6 +128,39 @@ def learn_cycle(
 				)
 			act3 = preact3  # linear
 			return act3
+
+	def cnn_model(inpt, num_actions, scope, lc, reuse=False, register=False):
+		"""Add convolution layers before model"""
+		conv_n_maps = [32, 64, 64]
+		conv_kernel_sizes = [(8, 8), (4, 4), (3, 3)]
+		conv_strides = [4, 2, 1]
+		conv_paddings = ["SAME"] * 3
+		conv_activation = [tf.nn.relu] * 3
+
+		with tf.variable_scope(scope, reuse=reuse):
+			for n_maps, kernel_size, strides, padding, activation in zip(
+					conv_n_maps, conv_kernel_sizes, conv_strides,
+					conv_paddings, conv_activation):
+				layer = tf.layers.Conv2D(
+					filters=n_maps, kernel_size=kernel_size,
+					strides=strides, padding=padding, activation=None,
+				)
+				_output = layer(inpt)
+				params = layer.kernel, layer.bias
+				if register:
+					lc.register_conv2d(
+						params=params,
+						padding=padding,
+						strides=(1, strides, strides, 1),
+						inputs=inpt,
+						outputs=_output,
+						reuse=None
+					)
+				inpt = activation(_output)
+
+			inpt = tf.layers.Flatten()(inpt)
+
+		return model(inpt, num_actions, scope, lc, reuse, register)
 
 	# build actuator - model for decision taking
 	# as is from baselines
@@ -236,6 +282,11 @@ def learn_cycle(
 
 	# create environment
 	env = gym.make(_gym_env)
+
+	# preprocess environment
+	wrapper, model_type = preprocessor[_gym_env]
+	env = wrapper(env)
+
 	env.seed(_seed)
 	obs = env.reset()
 	episode_rewards = [0.0]
@@ -249,7 +300,7 @@ def learn_cycle(
 		# Create all the functions necessary to train the model
 		act, train, update_target, debug = build_train(
 			make_obs_ph=lambda name: ObservationInput(env.observation_space, name=name),
-			q_func=model,
+			q_func=cnn_model if model_type == "cnn" else model,
 			num_actions=env.action_space.n,
 			optimizer=_optimizer,
 			lc=lc_

@@ -5,12 +5,12 @@ _optimizer_orig = "kfac"  # "adam" or "kfac"
 _gym_env_orig = "CartPole-v1"  # any valid OpenAI discrete Gym environment
 
 _common_opts_orig = {
-	"OVERALL_STEPS": 50000,					# overall number of learning steps
+	"OVERALL_STEPS": 150000,					# overall number of learning steps
 	"UPDATE_TARGET_EVERY": 1000,			# how often to transfer weights from online to target
 	"REPLAY_BUFFER_SAMPLE_SIZE": 100,		# sample size for off-policy training
 	"WARMUP_TIME": 1000,					# steps to play before training for buffer filling
 	"LINEAR_SCHEDULE_LENGTH": 10000,		# steps before exploration value decreasing to min_value
-	"REPLAY_BUFFER_SIZE": 20000,			# size of replay buffer
+	"REPLAY_BUFFER_SIZE": 30000,			# size of replay buffer
 }
 
 _kfac_opts_orig = {
