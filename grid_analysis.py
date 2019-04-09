@@ -1,30 +1,37 @@
 import pickle
 import os
-import matplotlib.pyplot as plt
-import numpy as np
+import visualiser
+from collections import defaultdict
+import hashlib
 
-RESULT_FOLDER = ["results1", "results2"]
-
+RESULT_FOLDER = ["results_kfac_long", "results_adam_long", "results_rmsprop_long"]
 all_res = []
 for folder in RESULT_FOLDER:
 	for file in os.listdir(folder):
 		with open(folder + "/" + file, "rb") as f:
 			all_res.append(pickle.load(f))
 
+all_res = [j for i in all_res for j in i]
 
-# parse 2 level lists
-uncovered_list = [j for i in all_res for j in i]
+results = defaultdict(list)
+for i in all_res:
+	results[frozenset(sorted(i[1][3].items()))].append(i[-1])
 
-# sanity check
-overall_count = sum(len(x) for x in all_res)
-print(overall_count == len(uncovered_list))
+good_results = [
+frozenset({('epsilon', 1e-10), ('momentum', 0.95), ('learning_rate', 0.0001), ('decay', 0.95)}),
+frozenset({('epsilon', 1e-10), ('momentum', 0.95), ('learning_rate', 0.0001), ('decay', 0.99)}),
+frozenset({('beta2', 0.99), ('learning_rate', 0.001), ('beta1', 0.9), ('epsilon', 1e-08)}),
+frozenset({('beta2', 0.999), ('learning_rate', 0.001), ('beta1', 0.5), ('epsilon', 1e-08)}),
+frozenset({('beta2', 0.99), ('learning_rate', 0.001), ('beta1', 0.5), ('epsilon', 1e-08)}),
+frozenset({('cov_update_every', 1), ('momentum', 0.9), ('invert_every', 100), ('learning_rate', 0.001), ('damping', 0.01), ('cov_ema_decay', 0.95)})
+]
 
 
-# get 250-epoch club
-ep250 = [i for i in uncovered_list if np.max(i[-1][:250]) > 490]
-fig = plt.figure()
-for i, a in enumerate(ep250):
-	plt.plot(a[1], label=str(i))
-
-plt.legend()
-plt.show()
+visualiser.visualise(
+    [results[i] for i in good_results],
+    color=['green', 'blue', 'orange'],
+    show_std=False,
+    legend=True,
+    labels=["rmsprop-v1", "rmsprop-v2", "adam-v1", "adam-v2", "adam-v3", "k-fac-v1"],
+	border=None
+)
