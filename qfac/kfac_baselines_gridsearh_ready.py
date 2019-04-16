@@ -374,5 +374,5 @@ if __name__ == '__main__':
 		results.append((attempt_hash, opts, rews))
 		print(f"{i+1}/{len(configs)} finished, time: {datetime.datetime.now()}")
 
-	with open(filename + ".results", "wb") as f:
-		pickle.dump(results, f)
+		with open(filename + ".results", "wb") as f:
+			pickle.dump(results, f)
