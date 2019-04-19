@@ -94,7 +94,7 @@ def learn_cycle(
 	def model(inpt, num_actions, scope, lc, reuse=False, register=False):
 		"""This model takes as input an observation and returns values of all actions."""
 		with tf.variable_scope(scope, reuse=reuse):
-			layer1 = tf.layers.Dense(64, name="Dense1", activation=None)
+			layer1 = tf.layers.Dense(256, name="Dense1", activation=None)
 			preact1 = layer1(inpt)
 			params1 = layer1.kernel, layer1.bias
 			if register:
