@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-RESULT_FOLDER = ["results_adam"]
+RESULT_FOLDER = ["results_test_cnn"]
 
 all_res = []
 for folder in RESULT_FOLDER:

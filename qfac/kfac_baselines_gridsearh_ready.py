@@ -34,6 +34,7 @@ from collections import defaultdict
 import tensorflow as tf
 import baselines.common.tf_util as u
 import gym
+import sys
 
 from baselines.deepq.replay_buffer import ReplayBuffer
 from baselines.deepq.utils import ObservationInput
@@ -41,7 +42,6 @@ from baselines.common.schedules import LinearSchedule
 
 # dirty :(
 try:
-	import sys
 	sys.path.append(".")
 	from env_wrappers import *
 except ImportError:
@@ -146,6 +146,7 @@ def learn_cycle(
 				layer = tf.layers.Conv2D(
 					filters=n_maps, kernel_size=kernel_size,
 					strides=strides, padding=padding, activation=None,
+					kernel_regularizer=tf.contrib.layers.l2_regularizer(scale=0.1)
 				)
 				_output = layer(inpt)
 				params = layer.kernel, layer.bias
