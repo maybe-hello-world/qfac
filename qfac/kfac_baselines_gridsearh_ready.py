@@ -133,11 +133,11 @@ def learn_cycle(
 
 	def cnn_model(inpt, num_actions, scope, lc, reuse=False, register=False):
 		"""Add convolution layers before model"""
-		conv_n_maps = [16, 32, 32]
-		conv_kernel_sizes = [(8, 8), (4, 4), (3, 3)]
-		conv_strides = [4, 2, 2]
-		conv_paddings = ["SAME"] * 3
-		conv_activation = [tf.nn.relu] * 3
+		conv_n_maps = [16, 32]
+		conv_kernel_sizes = [(8, 8), (4, 4)]
+		conv_strides = [4, 2]
+		conv_paddings = ["SAME"] * 2
+		conv_activation = [tf.nn.relu] * 2
 
 		with tf.variable_scope(scope, reuse=reuse):
 			for n_maps, kernel_size, strides, padding, activation in zip(
@@ -175,7 +175,7 @@ def learn_cycle(
 				)
 			act1 = tf.nn.relu(preact1, name="Act1")
 
-			layer2 = tf.layers.Dense(16, name="Dense2", activation=None)
+			layer2 = tf.layers.Dense(num_actions, name="Dense2", activation=None)
 			preact2 = layer2(act1)
 			params2 = layer2.kernel, layer2.bias
 			if register:
