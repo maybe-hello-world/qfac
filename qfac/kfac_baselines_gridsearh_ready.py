@@ -53,7 +53,7 @@ import kfac
 preprocessor = defaultdict(lambda: (PreprocessNothing, "dense"))
 # noinspection PyTypeChecker
 preprocessor.update({
-	"Breakout-v0": (PreprocessBreakout, "cnn")
+	"BreakoutDeterministic-v4": (PreprocessBreakout, "cnn")
 })
 
 
@@ -163,7 +163,30 @@ def learn_cycle(
 
 			inpt = tf.layers.Flatten()(inpt)
 
-		return model(inpt, num_actions, scope, lc, reuse, register)
+			layer1 = tf.layers.Dense(256, name="Dense1", activation=None)
+			preact1 = layer1(inpt)
+			params1 = layer1.kernel, layer1.bias
+			if register:
+				lc.register_fully_connected(
+					params=params1,
+					inputs=inpt,
+					outputs=preact1,
+					reuse=None
+				)
+			act1 = tf.nn.relu(preact1, name="Act1")
+
+			layer2 = tf.layers.Dense(16, name="Dense2", activation=None)
+			preact2 = layer2(act1)
+			params2 = layer2.kernel, layer2.bias
+			if register:
+				lc.register_fully_connected(
+					params=params2,
+					inputs=act1,
+					outputs=preact2,
+					reuse=None
+				)
+			act2 = preact2  # linear
+		return act2
 
 	# build actuator - model for decision taking
 	# as is from baselines
