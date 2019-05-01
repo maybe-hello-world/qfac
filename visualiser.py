@@ -1,6 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from typing import Any
+from scipy.signal import savgol_filter
+
+def __smooth(ys, window=21, poly=5):
+	yhat = savgol_filter(ys, window, poly)
+	return yhat
 
 
 def visualise(
@@ -46,17 +51,34 @@ def visualise(
 		stderr_y = std_y / np.sqrt(results.shape[0])
 
 		xs = np.arange(len(mean_y))
+		window = len(mean_y) // 30
+		window += (1 + window % 2)  # window should be odd
 
-		plt.plot(xs, mean_y, label=labels[i] if labels else None)
+		plt.plot(
+			xs,
+			__smooth(mean_y, window=window),
+			label=labels[i] if labels else None)
 
 		diff = mean_y - stderr_y
 		if clipping is not None:
 			diff = np.clip(diff, clipping, None)
-		plt.fill_between(xs, diff, mean_y + stderr_y, color=color, alpha=.2)
-		if show_std: plt.fill_between(xs, np.clip(mean_y - std_y, 0, None), mean_y + std_y, color=color, alpha=.2)
+		plt.fill_between(
+			xs,
+			__smooth(diff, window=window),
+			__smooth(mean_y + stderr_y, window=window),
+			color=color, alpha=.2)
+
+		if show_std:
+			diff = mean_y - std_y
+			if clipping is not None:
+				diff = np.clip(diff, clipping, None)
+			plt.fill_between(
+				xs,
+				__smooth(diff, window=window),
+				__smooth(mean_y + std_y, window=window),
+				color=color, alpha=.2)
 	if title:
 		plt.title(title)
 	if legend:
 		plt.legend()
 	plt.show()
-
