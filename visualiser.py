@@ -16,12 +16,14 @@ def visualise(
 		show_std: bool = True,
 		legend: bool = False,
 		labels: list = None,
-		clipping: int = None
+		clipping: int = None,
+		xlabel=None,
+		ylabel=None
 ) -> None:
 	"""
 	Visualise mean reward plot
 
-	:param results: list of lists of reward lists (or 3D np.ndarray)
+	:param results_list: list of lists of reward lists (or 3D np.ndarray)
 	:param border: right border of plot (if None - min(length of all arrays))
 	:param color: color of plot (green, blue, red, cyan, magenta, yellow, black, purple, orange, etc.)
 	:return: nothing, shows pyplot image
@@ -81,4 +83,8 @@ def visualise(
 		plt.title(title)
 	if legend:
 		plt.legend()
+	if xlabel:
+		plt.xlabel(xlabel)
+	if ylabel:
+		plt.ylabel(ylabel)
 	plt.show()
