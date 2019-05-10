@@ -53,7 +53,8 @@ import kfac
 preprocessor = defaultdict(lambda: (PreprocessNothing, "dense"))
 # noinspection PyTypeChecker
 preprocessor.update({
-	"BreakoutDeterministic-v4": (PreprocessBreakout, "cnn")
+	"BreakoutDeterministic-v4": (PreprocessBreakout, "cnn"),
+	"MountainCar-v0": (PreprocessMountainCar, "dense")
 })
 
 
