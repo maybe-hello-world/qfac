@@ -5,8 +5,37 @@ import numpy as np
 
 class PreprocessNothing(ObservationWrapper):
 	"""For environments that do not need to be preprocessed"""
-	def observation(self, img):
-		return img
+	def observation(self, obs):
+		return obs
+
+
+class PreprocessMountainCar(ObservationWrapper):
+	def __init__(self, env):
+		super(PreprocessMountainCar, self).__init__(env)
+
+		self.epsmin = 0.000001
+		self.epsmax = 1 - self.epsmin
+
+		self.low = np.array([self.epsmin, self.epsmin])
+		self.high = np.array([self.epsmax, self.epsmax])
+
+		self.observation_space = gym.spaces.Box(self.low, self.high, dtype=np.float32)
+
+
+	def observation(self, observation):
+		position, velocity = observation
+
+		# -1.2 <= position <= 0.6, let's normalize to 0..1
+		position += 0.3
+		position /= 2
+		position += 0.5
+		position = np.clip(position, self.epsmin, self.epsmax)
+
+		# -0.07 <= speed <= 0.07
+		velocity *= 7
+		velocity += 0.5
+		velocity = np.clip(velocity, self.epsmin, self.epsmax)
+		return position, velocity
 
 
 class PreprocessBreakout(ObservationWrapper):
