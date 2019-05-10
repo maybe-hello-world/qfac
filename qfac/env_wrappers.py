@@ -35,7 +35,7 @@ class PreprocessMountainCar(ObservationWrapper):
 		velocity *= 7
 		velocity += 0.5
 		velocity = np.clip(velocity, self.epsmin, self.epsmax)
-		return position, velocity
+		return np.array((position, velocity))
 
 
 class PreprocessBreakout(ObservationWrapper):
