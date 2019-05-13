@@ -13,7 +13,7 @@ class PreprocessMountainCar(ObservationWrapper):
 	def __init__(self, env):
 		super(PreprocessMountainCar, self).__init__(env)
 
-		self.epsmin = 0.000001
+		self.epsmin = 0.001
 		self.epsmax = 1 - self.epsmin
 
 		self.low = np.array([self.epsmin, self.epsmin])

@@ -18,7 +18,8 @@ def visualise(
 		labels: list = None,
 		clipping: int = None,
 		xlabel=None,
-		ylabel=None
+		ylabel=None,
+		smoothing_window=None
 ) -> None:
 	"""
 	Visualise mean reward plot
@@ -53,7 +54,7 @@ def visualise(
 		stderr_y = std_y / np.sqrt(results.shape[0])
 
 		xs = np.arange(len(mean_y))
-		window = len(mean_y) // 30
+		window = smoothing_window or len(mean_y) // 30
 		window += (1 + window % 2)  # window should be odd
 
 		plt.plot(
