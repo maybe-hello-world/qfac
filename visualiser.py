@@ -33,6 +33,8 @@ def visualise(
 	plt.rcParams['axes.facecolor'] = 'w'
 	plt.figure()
 	plt.grid(True)
+	if not isinstance(color, list):
+		color = [color] * len(results_list)
 	for i, results in enumerate(results_list):
 		if isinstance(results, list):
 			if isinstance(results[0], list) or isinstance(results[0], tuple):
@@ -60,7 +62,9 @@ def visualise(
 		plt.plot(
 			xs,
 			__smooth(mean_y, window=window),
-			label=labels[i] if labels else None)
+			label=labels[i] if labels else None,
+			color=color[i]
+		)
 
 		diff = mean_y - stderr_y
 		if clipping is not None:
@@ -69,7 +73,7 @@ def visualise(
 			xs,
 			__smooth(diff, window=window),
 			__smooth(mean_y + stderr_y, window=window),
-			color=color, alpha=.2)
+			color=color[i], alpha=.2)
 
 		if show_std:
 			diff = mean_y - std_y
@@ -79,7 +83,7 @@ def visualise(
 				xs,
 				__smooth(diff, window=window),
 				__smooth(mean_y + std_y, window=window),
-				color=color, alpha=.2)
+				color=color[i], alpha=.2)
 	if title:
 		plt.title(title)
 	if legend:
