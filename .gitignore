@@ -3,3 +3,5 @@ tasks*
 .idea
 .ipynb_checkpoints
 __pycache__
+*.ipynb
+temp*
